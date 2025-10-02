@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Knowledge Base</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            color: #374151;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+        
+        .nav-link.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: #ef4444;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f9fafb;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge.create {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.update {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge.delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge.login {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge.logout {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .pagination a {
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            color: #374151;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .pagination a:hover {
+            background: #e5e7eb;
+        }
+        
+        .pagination .current {
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        
+        .details {
+            font-size: 0.75rem;
+            color: #6b7280;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title"><%= title %></h1>
+            <nav class="nav">
+                <a href="/admin" class="nav-link">仪表板</a>
+                <a href="/admin/users" class="nav-link">用户管理</a>
+                <a href="/admin/documents" class="nav-link">文档管理</a>
+                <a href="/admin/tags" class="nav-link">标签管理</a>
+                <a href="/admin/audit-logs" class="nav-link active">审计日志</a>
+                <a href="/admin/logout" class="logout-btn">退出登录</a>
+            </nav>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number"><%= pagination.total %></div>
+                <div class="stat-label">总日志数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= auditLogs ? auditLogs.filter(log => log.action.includes('login')).length : 0 %></div>
+                <div class="stat-label">登录记录</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= auditLogs ? auditLogs.filter(log => log.action.includes('create')).length : 0 %></div>
+                <div class="stat-label">创建操作</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><%= auditLogs ? auditLogs.filter(log => log.action.includes('update')).length : 0 %></div>
+                <div class="stat-label">更新操作</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <% if (auditLogs && auditLogs.length > 0) { %>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>操作者</th>
+                            <th>操作</th>
+                            <th>资源类型</th>
+                            <th>资源ID</th>
+                            <th>时间</th>
+                            <th>详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% auditLogs.forEach(log => { %>
+                            <tr>
+                                <td><%= log.user ? log.user.username : '系统' %></td>
+                                <td>
+                                    <span class="badge <%= log.action.includes('create') ? 'create' : log.action.includes('update') ? 'update' : log.action.includes('delete') ? 'delete' : log.action.includes('login') ? 'login' : 'logout' %>">
+                                        <%= log.action %>
+                                    </span>
+                                </td>
+                                <td><%= log.resourceType %></td>
+                                <td><%= log.resourceId || '-' %></td>
+                                <td><%= new Date(log.timestamp).toLocaleString('zh-CN') %></td>
+                                <td>
+                                    <div class="details" title="<%= JSON.stringify(log.details) %>">
+                                        <%= log.details ? JSON.stringify(log.details) : '-' %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div class="empty-state">
+                    <h3>暂无审计日志</h3>
+                    <p>系统中还没有审计日志数据</p>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (pagination.total > pagination.limit) { %>
+            <div class="pagination">
+                <% if (pagination.page > 1) { %>
+                    <a href="?page=<%= pagination.page - 1 %>">上一页</a>
+                <% } %>
+                
+                <% for (let i = Math.max(1, pagination.page - 2); i <= Math.min(Math.ceil(pagination.total / pagination.limit), pagination.page + 2); i++) { %>
+                    <% if (i === pagination.page) { %>
+                        <span class="current"><%= i %></span>
+                    <% } else { %>
+                        <a href="?page=<%= i %>"><%= i %></a>
+                    <% } %>
+                <% } %>
+                
+                <% if (pagination.page < Math.ceil(pagination.total / pagination.limit)) { %>
+                    <a href="?page=<%= pagination.page + 1 %>">下一页</a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
