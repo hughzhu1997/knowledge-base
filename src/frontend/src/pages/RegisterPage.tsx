@@ -20,7 +20,7 @@ export const RegisterPage: React.FC = () => {
   const { register, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // 如果已经登录，重定向到dashboard
+  // Redirect to dashboard if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard', { replace: true });
@@ -37,23 +37,23 @@ export const RegisterPage: React.FC = () => {
 
   const validateForm = () => {
     if (!formData.username.trim()) {
-      setError('用户名不能为空');
+      setError('Username cannot be empty');
       return false;
     }
     if (!formData.email.trim()) {
-      setError('邮箱不能为空');
+      setError('Email cannot be empty');
       return false;
     }
     if (!formData.password) {
-      setError('密码不能为空');
+      setError('Password cannot be empty');
       return false;
     }
     if (formData.password.length < 6) {
-      setError('密码至少需要6个字符');
+      setError('Password must be at least 6 characters');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError('两次输入的密码不匹配');
+      setError('Passwords do not match');
       return false;
     }
     return true;
@@ -78,9 +78,9 @@ export const RegisterPage: React.FC = () => {
       );
       
       setSuccess(true);
-      // 注册成功后会自动登录，useEffect会处理重定向
+      // After successful registration, auto-login will be handled by useEffect
     } catch (err) {
-      setError(err instanceof Error ? err.message : '注册失败');
+      setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -95,10 +95,10 @@ export const RegisterPage: React.FC = () => {
               <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              注册成功！
+              Registration Successful!
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              正在跳转到控制台...
+              Redirecting to dashboard...
             </p>
           </div>
         </div>
@@ -114,15 +114,15 @@ export const RegisterPage: React.FC = () => {
             <UserPlus className="h-6 w-6 text-green-600" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            创建新账户
+            Create New Account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            或{' '}
+            Or{' '}
             <Link 
               to="/login" 
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              登录现有账户
+              sign in to existing account
             </Link>
           </p>
         </div>
@@ -142,7 +142,7 @@ export const RegisterPage: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                用户名 *
+                Username *
               </label>
               <input
                 id="username"
@@ -150,7 +150,7 @@ export const RegisterPage: React.FC = () => {
                 type="text"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="用户名"
+                placeholder="Username"
                 value={formData.username}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -159,7 +159,7 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                邮箱地址 *
+                Email Address *
               </label>
               <input
                 id="email"
@@ -168,7 +168,7 @@ export const RegisterPage: React.FC = () => {
                 autoComplete="email"
                 required
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="邮箱地址"
+                placeholder="Email address"
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -177,14 +177,14 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700">
-                显示名称
+                Display Name
               </label>
               <input
                 id="displayName"
                 name="displayName"
                 type="text"
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="显示名称（可选）"
+                placeholder="Display name (optional)"
                 value={formData.displayName}
                 onChange={handleInputChange}
                 disabled={isLoading}
@@ -193,7 +193,7 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                密码 *
+                Password *
               </label>
               <div className="relative">
                 <input
@@ -203,7 +203,7 @@ export const RegisterPage: React.FC = () => {
                   autoComplete="new-password"
                   required
                   className="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="密码（至少6个字符）"
+                  placeholder="Password (at least 6 characters)"
                   value={formData.password}
                   onChange={handleInputChange}
                   disabled={isLoading}
@@ -225,7 +225,7 @@ export const RegisterPage: React.FC = () => {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                确认密码 *
+                Confirm Password *
               </label>
               <div className="relative">
                 <input
@@ -234,7 +234,7 @@ export const RegisterPage: React.FC = () => {
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
                   className="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="再次输入密码"
+                  placeholder="Confirm password"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   disabled={isLoading}
@@ -264,12 +264,12 @@ export const RegisterPage: React.FC = () => {
               {isLoading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  注册中...
+                  Creating account...
                 </div>
               ) : (
                 <>
                   <UserPlus className="h-4 w-4 mr-2" />
-                  创建账户
+                  Create Account
                 </>
               )}
             </button>
@@ -277,12 +277,12 @@ export const RegisterPage: React.FC = () => {
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              已有账户？{' '}
+              Already have an account?{' '}
               <Link 
                 to="/login" 
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                立即登录
+                Sign in now
               </Link>
             </p>
           </div>

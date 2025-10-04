@@ -38,10 +38,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 检查是否已认证
+  // Check if authenticated
   const isAuthenticated = !!user && !!tokens;
 
-  // 初始化时从localStorage恢复token
+  // Initialize auth state from localStorage on mount
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -52,19 +52,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const parsedTokens = JSON.parse(savedTokens);
           const parsedUser = JSON.parse(savedUser);
           
-          // 验证token是否仍然有效
+          // Verify if token is still valid
           const tokenExpiry = parsedTokens.expires_at;
           if (tokenExpiry && Date.now() < tokenExpiry) {
             setTokens(parsedTokens);
             setUser(parsedUser);
           } else {
-            // Token过期，清除本地存储
+            // Token expired, clear local storage
             localStorage.removeItem('auth_tokens');
             localStorage.removeItem('auth_user');
           }
         }
       } catch (error) {
-        console.error('初始化认证状态失败:', error);
+        console.error('Failed to initialize auth state:', error);
         localStorage.removeItem('auth_tokens');
         localStorage.removeItem('auth_user');
       } finally {
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, []);
 
-  // 登录函数
+  // Login function
   const login = async (email: string, password: string): Promise<void> => {
     try {
       const response = await fetch('/api/auth/login', {
@@ -88,30 +88,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || '登录失败');
+        throw new Error(errorData.error?.message || 'Login failed');
       }
 
       const data = await response.json();
       const { user: userData, tokens: tokenData } = data.data;
 
-      // 计算token过期时间
+      // Calculate token expiration time
       const expiresAt = Date.now() + (tokenData.expires_in * 1000);
       const tokensWithExpiry = { ...tokenData, expires_at: expiresAt };
 
       setUser(userData);
       setTokens(tokensWithExpiry);
 
-      // 保存到localStorage
+      // Save to localStorage
       localStorage.setItem('auth_tokens', JSON.stringify(tokensWithExpiry));
       localStorage.setItem('auth_user', JSON.stringify(userData));
 
     } catch (error) {
-      console.error('登录错误:', error);
+      console.error('Login error:', error);
       throw error;
     }
   };
 
-  // 注册函数
+  // Register function
   const register = async (
     username: string, 
     email: string, 
@@ -134,30 +134,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || '注册失败');
+        throw new Error(errorData.error?.message || 'Registration failed');
       }
 
       const data = await response.json();
       const { user: userData, tokens: tokenData } = data.data;
 
-      // 计算token过期时间
+      // Calculate token expiration time
       const expiresAt = Date.now() + (tokenData.expires_in * 1000);
       const tokensWithExpiry = { ...tokenData, expires_at: expiresAt };
 
       setUser(userData);
       setTokens(tokensWithExpiry);
 
-      // 保存到localStorage
+      // Save to localStorage
       localStorage.setItem('auth_tokens', JSON.stringify(tokensWithExpiry));
       localStorage.setItem('auth_user', JSON.stringify(userData));
 
     } catch (error) {
-      console.error('注册错误:', error);
+      console.error('Registration error:', error);
       throw error;
     }
   };
 
-  // 注销函数
+  // Logout function
   const logout = (): void => {
     setUser(null);
     setTokens(null);
@@ -165,7 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('auth_user');
   };
 
-  // 刷新token函数
+  // Refresh token function
   const refreshAuthToken = async (): Promise<void> => {
     if (!tokens?.refresh_token) {
       logout();
@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('auth_tokens', JSON.stringify(tokensWithExpiry));
 
     } catch (error) {
-      console.error('刷新token失败:', error);
+      console.error('Failed to refresh token:', error);
       logout();
     }
   };

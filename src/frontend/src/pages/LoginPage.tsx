@@ -14,7 +14,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 如果已经登录，重定向到目标页面或dashboard
+  // Redirect to target page or dashboard if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/dashboard';
@@ -29,9 +29,9 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login(email, password);
-      // Login成功后，useEffect会自动重定向
+      // After successful login, useEffect will automatically redirect
     } catch (err) {
-      setError(err instanceof Error ? err.message : '登录失败');
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -45,15 +45,15 @@ export const LoginPage: React.FC = () => {
             <LogIn className="h-6 w-6 text-blue-600" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            登录到知识库
+            Sign in to Knowledge Base
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-           或{' '}
+            Or{' '}
             <Link 
               to="/register" 
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              创建新账户
+              create a new account
             </Link>
           </p>
         </div>
@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
-                邮箱地址
+                Email address
               </label>
               <input
                 id="email"
@@ -82,7 +82,7 @@ export const LoginPage: React.FC = () => {
                 autoComplete="email"
                 required
                 className="appearance-none rounded-t-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="邮箱地址"
+                placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
@@ -90,7 +90,7 @@ export const LoginPage: React.FC = () => {
             </div>
             <div className="relative">
               <label htmlFor="password" className="sr-only">
-                密码
+                Password
               </label>
               <input
                 id="password"
@@ -99,7 +99,7 @@ export const LoginPage: React.FC = () => {
                 autoComplete="current-password"
                 required
                 className="appearance-none rounded-b-md relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="密码"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
@@ -128,12 +128,12 @@ export const LoginPage: React.FC = () => {
               {isLoading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  登录中...
+                  Signing in...
                 </div>
               ) : (
                 <>
                   <LogIn className="h-4 w-4 mr-2" />
-                  登录
+                  Sign In
                 </>
               )}
             </button>
@@ -141,12 +141,12 @@ export const LoginPage: React.FC = () => {
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              测试账户未准备好？{' '}
+              Don't have an account?{' '}
               <Link 
                 to="/register" 
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                立即注册
+                Sign up now
               </Link>
             </p>
           </div>
