@@ -1,69 +1,15 @@
 import express from 'express';
-import { authenticateToken, optionalAuth } from '../middleware/auth.js';
+import { authenticateToken } from '../middleware/auth.js';
 import { 
   canReadDocs, 
   canCreateDocs, 
   canUpdateDocs, 
   canDeleteDocs,
-  selfResourceIAM,
   resourceIAM 
 } from '../middleware/iam.js';
+import { DocumentController } from '../controllers/DocumentController.js';
 
 const router = express.Router();
-
-/**
- * Get all documents
- * Requires document read permissions
- */
-router.get('/',
-  optionalAuth,
-  canReadDocs,
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'Documents retrieved successfully',
-      data: {
-        documents: [
-          {
-            id: 'doc-1',
-            title: 'Sample Document',
-            content: 'This is a sample document',
-            author: 'admin',
-            createdAt: new Date().toISOString(),
-            isPublic: true
-          }
-        ],
-        count: 1,
-        user: req.user ? req.user.username : 'anonymous'
-      }
-    });
-  }
-);
-
-/**
- * Get specific document
- * Requires document read permissions for that specific document
- */
-router.get('/:docId',
-  authenticateToken,
-  resourceIAM('docs:Read', 'doc'),
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'Document retrieved successfully',
-      data: {
-        document: {
-          id: req.params.docId,
-          title: `Document ${req.params.docId}`,
-          content: 'This is the document content',
-          author: req.user.username,
-          createdAt: new Date().toISOString(),
-          permissions: req.iamDecision || 'IAM decision not available'
-        }
-      }
-    });
-  }
-);
 
 /**
  * Create new document
@@ -72,97 +18,107 @@ router.get('/:docId',
 router.post('/',
   authenticateToken,
   canCreateDocs,
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'Document created successfully',
-      data: {
-        document: {
-          id: `doc-${Date.now()}`,
-          title: req.body.title || 'New Document',
-          content: req.body.content || '',
-          author: req.user.username,
-          createdAt: new Date().toISOString()
-        },
-        permissions: req.iamDecision || 'IAM decision not available'
-      }
-    });
-  }
+  DocumentController.createDocument
+);
+
+/**
+ * Get all documents with pagination and filtering
+ * Requires document read permissions
+ */
+router.get('/',
+  authenticateToken,
+  canReadDocs,
+  DocumentController.getDocuments
+);
+
+/**
+ * Search documents using full-text search
+ * Requires document read permissions
+ */
+router.get('/search',
+  authenticateToken,
+  canReadDocs,
+  DocumentController.searchDocuments
+);
+
+/**
+ * Get document statistics
+ * Requires document read permissions
+ */
+router.get('/stats',
+  authenticateToken,
+  canReadDocs,
+  DocumentController.getDocumentStats
+);
+
+/**
+ * Get user's own documents
+ * Requires document read permissions for user's own docs
+ */
+router.get('/my',
+  authenticateToken,
+  selfResourceIAM('docs:Read', 'doc'),
+  DocumentController.getUserDocuments
+);
+
+/**
+ * Get specific document by ID
+ * Requires document read permissions for that specific document
+ */
+router.get('/:documentId',
+  authenticateToken,
+  resourceIAM('docs:Read', 'doc'),
+  DocumentController.getDocument
 );
 
 /**
  * Update document
  * Requires document update permissions for that specific document
  */
-router.put('/:docId',
+router.put('/:documentId',
   authenticateToken,
   resourceIAM('docs:Update', 'doc'),
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'Document updated successfully',
-      data: {
-        document: {
-          id: req.params.docId,
-          title: req.body.title || 'Updated Document',
-          content: req.body.content || 'Updated content',
-          author: req.user.username,
-          updatedAt: new Date().toISOString()
-        },
-        permissions: req.iamDecision || 'IAM decision not available'
-      }
-    });
-  }
+  DocumentController.updateDocument
 );
 
 /**
  * Delete document
  * Requires document deletion permissions for that specific document
  */
-router.delete('/:docId',
+router.delete('/:documentId',
   authenticateToken,
   resourceIAM('docs:Delete', 'doc'),
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'Document deleted successfully',
-      data: {
-        deletedDocumentId: req.params.docId,
-        deletedBy: req.user.username,
-        deletedAt: new Date().toISOString(),
-        permissions: req.iamDecision || 'IAM decision not available'
-      }
-    });
-  }
+  DocumentController.deleteDocument
 );
 
 /**
- * Get user's own documents
- * Uses self-resource IAM check
+ * Publish document
+ * Requires document update permissions for that specific document
  */
-router.get('/my/documents',
+router.post('/:documentId/publish',
   authenticateToken,
-  selfResourceIAM('docs:Read', 'doc'),
-  (req, res) => {
-    res.json({
-      success: true,
-      message: 'User documents retrieved successfully',
-      data: {
-        documents: [
-          {
-            id: `doc-${req.user.userId}-1`,
-            title: 'My Personal Document',
-            content: 'This is my personal document',
-            author: req.user.username,
-            createdAt: new Date().toISOString()
-          }
-        ],
-        count: 1,
-        user: req.user.username,
-        permissions: req.iamDecision || 'IAM decision not available'
-      }
-    });
-  }
+  resourceIAM('docs:Update', 'doc'),
+  DocumentController.publishDocument
+);
+
+/**
+ * Archive document
+ * Requires document update permissions for that specific document
+ */
+router.post('/:documentId/archive',
+  authenticateToken,
+  resourceIAM('docs:Update', 'doc'),
+  DocumentController.archiveDocument
+);
+
+/**
+ * Get document revisions
+ * Requires document read permissions for that specific document
+ */
+router.get('/:documentId/revisions',
+  authenticateToken,
+  resourceIAM('docs:Read', 'doc'),
+  DocumentController.getDocumentRevisions
 );
 
 export default router;

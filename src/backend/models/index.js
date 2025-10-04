@@ -22,6 +22,10 @@ import Role from './Role.js';
 import Policy from './Policy.js';
 import UserRole from './UserRole.js';
 import RolePolicy from './RolePolicy.js';
+import Document from './Document.js';
+import Tag from './Tag.js';
+import DocumentTag from './DocumentTag.js';
+import Revision from './Revision.js';
 
 // Initialize models
 const db = {};
@@ -30,6 +34,10 @@ db.Role = Role(sequelize);
 db.Policy = Policy(sequelize);
 db.UserRole = UserRole(sequelize);
 db.RolePolicy = RolePolicy(sequelize);
+db.Document = Document(sequelize, Sequelize.DataTypes);
+db.Tag = Tag(sequelize, Sequelize.DataTypes);
+db.DocumentTag = DocumentTag(sequelize, Sequelize.DataTypes);
+db.Revision = Revision(sequelize, Sequelize.DataTypes);
 
 // Define associations
 
@@ -116,6 +124,59 @@ db.Role.hasMany(db.RolePolicy, {
 db.Policy.hasMany(db.RolePolicy, {
   foreignKey: 'policy_id',
   as: 'rolePolicies'
+});
+
+// Document ↔ User associations
+db.Document.belongsTo(db.User, {
+  foreignKey: 'author_id',
+  as: 'author'
+});
+
+db.User.hasMany(db.Document, {
+  foreignKey: 'author_id',
+  as: 'documents'
+});
+
+// Document ↔ Tag associations
+db.Document.belongsToMany(db.Tag, {
+  through: db.DocumentTag,
+  foreignKey: 'document_id',
+  otherKey: 'tag_id',
+  as: 'tags'
+});
+
+db.Tag.belongsToMany(db.Document, {
+  through: db.DocumentTag,
+  foreignKey: 'tag_id',
+  otherKey: 'document_id',
+  as: 'documents'
+});
+
+// Document ↔ Revision associations
+db.Document.hasMany(db.Revision, {
+  foreignKey: 'document_id',
+  as: 'revisions'
+});
+
+db.Revision.belongsTo(db.Document, {
+  foreignKey: 'document_id',
+  as: 'document'
+});
+
+db.Revision.belongsTo(db.User, {
+  foreignKey: 'updated_by',
+  as: 'updater'
+});
+
+// Tag ↔ User associations
+db.Tag.belongsTo(db.User, {
+  foreignKey: 'created_by',
+  as: 'creator'
+});
+
+db.User.hasMany(db.Tag, {
+  foreignKey: 'created_by',
+  as: 'createdTags'
 });
 
 // Export everything

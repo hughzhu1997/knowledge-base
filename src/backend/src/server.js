@@ -10,6 +10,7 @@ import authRoutes from '../routes/auth.js';
 import enhancedAuthRoutes from '../routes/enhanced-auth.js';
 import adminRoutes from '../routes/admin.js';
 import documentRoutes from '../routes/documents.js';
+import tagRoutes from '../routes/tags.js';
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/enhanced-auth', enhancedAuthRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/tags', tagRoutes);
 
 // Root route
 app.get('/api', (req, res) => {
@@ -74,14 +76,30 @@ app.get('/api', (req, res) => {
           createUser: 'POST /api/admin/users (IAM: users:Create)',
           settings: 'GET /api/admin/settings (IAM: system:Manage)'
         },
-        documents: {
-          list: 'GET /api/documents (IAM: docs:Read)',
-          get: 'GET /api/documents/:id (IAM: docs:Read)',
-          create: 'POST /api/documents (IAM: docs:Create)',
-          update: 'PUT /api/documents/:id (IAM: docs:Update)',
-          delete: 'DELETE /api/documents/:id (IAM: docs:Delete)',
-          myDocs: 'GET /api/documents/my/documents (IAM: docs:Read)'
-        }
+            documents: {
+              list: 'GET /api/documents (IAM: docs:Read)',
+              get: 'GET /api/documents/:id (IAM: docs:Read)',
+              create: 'POST /api/documents (IAM: docs:Create)',
+              update: 'PUT /api/documents/:id (IAM: docs:Update)',
+              delete: 'DELETE /api/documents/:id (IAM: docs:Delete)',
+              publish: 'POST /api/documents/:id/publish (IAM: docs:Update)',
+              archive: 'POST /api/documents/:id/archive (IAM: docs:Update)',
+              revisions: 'GET /api/documents/:id/revisions (IAM: docs:Read)',
+              search: 'GET /api/documents/search (IAM: docs:Read)',
+              stats: 'GET /api/documents/stats (IAM: docs:Read)',
+              myDocs: 'GET /api/documents/my (IAM: docs:Read)'
+            },
+            tags: {
+              list: 'GET /api/tags (IAM: docs:Read)',
+              get: 'GET /api/tags/:id (IAM: docs:Read)',
+              create: 'POST /api/tags (IAM: docs:Create)',
+              update: 'PUT /api/tags/:id (IAM: docs:Update)',
+              delete: 'DELETE /api/tags/:id (IAM: docs:Delete)',
+              search: 'GET /api/tags/search (IAM: docs:Read)',
+              popular: 'GET /api/tags/popular (IAM: docs:Read)',
+              stats: 'GET /api/tags/stats (IAM: docs:Read)',
+              byDocument: 'GET /api/tags/document/:id (IAM: docs:Read)'
+            }
       }
   });
 });

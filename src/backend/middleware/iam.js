@@ -305,9 +305,9 @@ export const iamCheck = (action, resource, options = {}) => {
       const result = await evaluatePolicies(action, resourceValue, req.user.userId, context);
       
       // Debug logging (commented out for production)
-      // console.log(`🔍 IAM Check: ${action} on ${resourceValue} for user ${req.user.userId}`);
-      // console.log(`   Context:`, context);
-      // console.log(`   Decision:`, result.decision, result.reason);
+      console.log(`🔍 IAM Check: ${action} on ${resourceValue} for user ${req.user.userId}`);
+      console.log(`   Context:`, context);
+      console.log(`   Decision:`, result.decision, result.reason);
       
       if (result.decision === 'Allow') {
         // Attach policy decision to request for logging/debugging
@@ -344,8 +344,8 @@ export const iamCheck = (action, resource, options = {}) => {
  */
 
 // Document operations
-export const canReadDocs = iamCheck('docs:Read', '*');
-export const canCreateDocs = iamCheck('docs:Create', '*');
+export const canReadDocs = iamCheck('docs:Read', 'doc:*');
+export const canCreateDocs = iamCheck('docs:Create', (req) => `doc:${req.user.userId}/*`);
 export const canUpdateDocs = iamCheck('docs:Update', '*');
 export const canDeleteDocs = iamCheck('docs:Delete', '*');
 
@@ -366,7 +366,7 @@ export const canManageSystem = iamCheck('system:Manage', '*');
  */
 export const resourceIAM = (action, resourceType) => {
   return iamCheck(action, (req) => {
-    const resourceId = req.params.id || req.params.docId || req.params.userId;
+    const resourceId = req.params.id || req.params.docId || req.params.documentId || req.params.userId;
     return `${resourceType}:${resourceId}`;
   });
 };
@@ -381,12 +381,17 @@ export const resourceIAM = (action, resourceType) => {
 export const selfResourceIAM = (action, resourceType) => {
   return iamCheck(action, (req) => {
     const userId = req.user.userId;
-    return `${resourceType}:${userId}/*`;
+    return `${resourceType}:*`; // Use wildcard to match policy
   });
 };
 
+// Export functions for testing
+export { evaluatePolicies, getUserPolicies };
+
 export default {
   iamCheck,
+  evaluatePolicies,
+  getUserPolicies,
   canReadDocs,
   canCreateDocs,
   canUpdateDocs,
