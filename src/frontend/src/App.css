@@ -1,0 +1,36 @@
+/* Custom styles for the Knowledge Base System */
+
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.status-indicator {
+  transition: all 0.3s ease;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pulsate {
+  animation: pulsate 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulsate {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

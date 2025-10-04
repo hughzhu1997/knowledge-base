@@ -1,0 +1,26 @@
+{
+  "name": "knowledge-db",
+  "version": "2.0.0",
+  "description": "A modern knowledge base system with IAM permissions",
+  "private": true,
+  "workspaces": [
+    "src/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter=backend dev\" \"pnpm --filter=frontend dev\"",
+    "build": "pnpm --filter=frontend build && pnpm --filter=backend build",
+    "start": "pnpm --filter=backend start",
+    "test": "pnpm --filter=* test",
+    "lint": "pnpm --filter=* lint",
+    "type-check": "pnpm --filter=* type-check"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@types/node": "^20.11.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@10.17.1"
+}
