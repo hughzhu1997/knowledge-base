@@ -6,7 +6,7 @@ dotenv.config();
 
 // Create Sequelize instance
 const sequelize = new Sequelize(process.env.DATABASE_URL || 
-  `postgres://${process.env.DB_USER || 'knowledge_user'}:${process.env.DB_PASSWORD || 'knowledge_pass'}@${process.env.DB_HOST || '127.0.0.1'}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME || 'knowledge_db'}`, {
+  `postgres://${process.env.DB_USER || 'mac'}:${process.env.DB_PASSWORD || null}@${process.env.DB_HOST || '127.0.0.1'}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME || 'knowledge_db'}`, {
   dialect: 'postgres',
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   define: {
@@ -34,14 +34,14 @@ db.RolePolicy = RolePolicy(sequelize);
 // Define associations
 
 // User ↔ Role (Many-to-Many through UserRole)
-db.User.belongsMany(db.Role, {
+db.User.belongsToMany(db.Role, {
   through: db.UserRole,
   foreignKey: 'user_id',
   otherKey: 'role_id',
   as: 'roles'
 });
 
-db.Role.belongsMany(db.User, {
+db.Role.belongsToMany(db.User, {
   through: db.UserRole,
   foreignKey: 'role_id',
   otherKey: 'user_id',
@@ -49,14 +49,14 @@ db.Role.belongsMany(db.User, {
 });
 
 // Role ↔ Policy (Many-to-Many through RolePolicy)
-db.Role.belongsMany(db.Policy, {
+db.Role.belongsToMany(db.Policy, {
   through: db.RolePolicy,
   foreignKey: 'role_id',
   otherKey: 'policy_id',
   as: 'policies'
 });
 
-db.Policy.belongsMany(db.Role, {
+db.Policy.belongsToMany(db.Role, {
   through: db.RolePolicy,
   foreignKey: 'policy_id',
   otherKey: 'role_id',

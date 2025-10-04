@@ -5,6 +5,10 @@ import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
+// Import routes
+import authRoutes from '../routes/auth.js';
+import enhancedAuthRoutes from '../routes/enhanced-auth.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -39,15 +43,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/enhanced-auth', enhancedAuthRoutes);
+
 // Root route
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({
     message: 'Knowledge Base System API',
     version: '2.0.0',
     status: 'running',
     endpoints: {
       health: '/api/health',
-      docs: '/api/docs'
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        refresh: 'POST /api/auth/refresh',
+        changePassword: 'POST /api/auth/change-password'
+      },
+      enhancedAuth: {
+        enhancedRegister: 'POST /api/enhanced-auth/register (Admin only)'
+      }
     }
   });
 });
