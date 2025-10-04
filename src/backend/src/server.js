@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 // Import routes
 import authRoutes from '../routes/auth.js';
 import enhancedAuthRoutes from '../routes/enhanced-auth.js';
+import adminRoutes from '../routes/admin.js';
+import documentRoutes from '../routes/documents.js';
 
 // Load environment variables
 dotenv.config();
@@ -46,6 +48,8 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/enhanced-auth', enhancedAuthRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/documents', documentRoutes);
 
 // Root route
 app.get('/api', (req, res) => {
@@ -53,18 +57,32 @@ app.get('/api', (req, res) => {
     message: 'Knowledge Base System API',
     version: '2.0.0',
     status: 'running',
-    endpoints: {
-      health: '/api/health',
-      auth: {
-        register: 'POST /api/auth/register',
-        login: 'POST /api/auth/login',
-        refresh: 'POST /api/auth/refresh',
-        changePassword: 'POST /api/auth/change-password'
-      },
-      enhancedAuth: {
-        enhancedRegister: 'POST /api/enhanced-auth/register (Admin only)'
+      endpoints: {
+        health: '/api/health',
+        auth: {
+          register: 'POST /api/auth/register',
+          login: 'POST /api/auth/login',
+          refresh: 'POST /api/auth/refresh',
+          changePassword: 'POST /api/auth/change-password'
+        },
+        enhancedAuth: {
+          enhancedRegister: 'POST /api/enhanced-auth/register (Admin only)'
+        },
+        admin: {
+          dashboard: 'GET /api/admin/dashboard (IAM: system:Manage)',
+          users: 'GET /api/admin/users (IAM: users:Read)',
+          createUser: 'POST /api/admin/users (IAM: users:Create)',
+          settings: 'GET /api/admin/settings (IAM: system:Manage)'
+        },
+        documents: {
+          list: 'GET /api/documents (IAM: docs:Read)',
+          get: 'GET /api/documents/:id (IAM: docs:Read)',
+          create: 'POST /api/documents (IAM: docs:Create)',
+          update: 'PUT /api/documents/:id (IAM: docs:Update)',
+          delete: 'DELETE /api/documents/:id (IAM: docs:Delete)',
+          myDocs: 'GET /api/documents/my/documents (IAM: docs:Read)'
+        }
       }
-    }
   });
 });
 
