@@ -13,7 +13,7 @@ export class DocumentService {
    * @returns {Promise<Object>} Created document
    */
   static async createDocument(documentData, authorId) {
-    const { title, content, summary, category, doc_type, visibility, tags } = documentData;
+    const { title, content, summary, category, doc_type, visibility, tagIds } = documentData;
 
     // Validate required fields
     if (!title || !content || !category) {
@@ -34,8 +34,16 @@ export class DocumentService {
     });
 
     // Add tags if provided
-    if (tags && tags.length > 0) {
-      await db.DocumentTag.addTagsToDocument(document.id, tags, authorId);
+    if (tagIds && tagIds.length > 0) {
+      // Create associations for tag IDs
+      const associations = tagIds.map(tagId => ({
+        document_id: document.id,
+        tag_id: tagId
+      }));
+      
+      await db.DocumentTag.bulkCreate(associations, {
+        ignoreDuplicates: true
+      });
     }
 
     // Create initial revision
@@ -149,19 +157,13 @@ export class DocumentService {
       {
         model: db.Tag,
         as: 'tags',
-        attributes: ['id', 'name', 'description', 'color']
+        attributes: ['id', 'name', 'description', 'color'],
+        // Apply tag filter if tags are specified
+        ...(tags && tags.length > 0 ? {
+          where: { id: { [Op.in]: tags } }
+        } : {})
       }
     ];
-
-    // Apply tag filter
-    if (tags && tags.length > 0) {
-      include.push({
-        model: db.Tag,
-        as: 'tags',
-        where: { name: { [Op.in]: tags } },
-        attributes: ['id', 'name', 'description', 'color']
-      });
-    }
 
     const { count, rows: documents } = await db.Document.findAndCountAll({
       where,

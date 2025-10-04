@@ -9,6 +9,7 @@ import { DocumentsPage } from './pages/DocumentsPage';
 import { DocumentDetailPage } from './pages/DocumentDetailPage';
 import { DocumentEditPage } from './pages/DocumentEditPage';
 import { DocumentCreatePage } from './pages/DocumentCreatePage';
+import AdminAuditLogsPage from './pages/AdminAuditLogsPage';
 import './App.css';
 
 function App() {
@@ -61,6 +62,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <DocumentEditPage />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Admin Routes */}
+          <Route 
+            path="/admin/audit-logs" 
+            element={
+              <ProtectedRoute>
+                <AdminAuditLogsPage />
               </ProtectedRoute>
             } 
           />
