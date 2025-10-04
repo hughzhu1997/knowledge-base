@@ -377,12 +377,13 @@ CREATE INDEX idx_user_roles_active ON user_roles(user_id, role_id) WHERE expires
 ```mermaid
 graph TB
     subgraph "页面层 (Pages)"
-        A[Home 首页]
-        B[Login 登录]
-        C[Dashboard 仪表板]
-        D[DocumentManagement 文档管理]
-        E[UserManagement 用户管理]
-        F[PermissionManagement 权限管理]
+        A[HomePage 专业主页]
+        B[LoginPage 登录]
+        C[RegisterPage 注册]
+        D[DashboardPage 仪表板]
+        E[DocumentManagement 文档管理]
+        F[UserManagement 用户管理]
+        G[PermissionManagement 权限管理]
     end
     
     subgraph "布局层 (Layout)"
@@ -456,6 +457,30 @@ graph TB
     D --> G
     E --> H
 ```
+
+### 6.3 主页功能架构
+
+主页 (`HomePage.tsx`) 是系统的入口页面，提供专业的产品展示和用户引导：
+
+#### 6.3.1 功能特性
+- **产品展示**：Hero区域展示核心价值主张
+- **功能亮点**：6个核心功能模块展示
+- **统计数据**：系统使用情况统计
+- **优势介绍**：4个关键优势点
+- **智能导航**：根据用户登录状态显示不同按钮
+- **响应式设计**：适配桌面和移动设备
+
+#### 6.3.2 技术实现
+- **组件结构**：单一组件，包含多个功能区域
+- **状态管理**：使用 `useAuth` Hook 获取认证状态
+- **路由集成**：作为根路径 (`/`) 的默认页面
+- **样式系统**：TailwindCSS 实现现代化设计
+
+#### 6.3.3 用户体验
+- **未登录用户**：显示注册和登录按钮，引导用户注册
+- **已登录用户**：显示欢迎信息和仪表板入口
+- **视觉设计**：渐变背景、卡片布局、图标设计
+- **交互反馈**：悬停效果、按钮状态变化
 
 ---
 
