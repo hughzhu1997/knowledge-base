@@ -8,6 +8,7 @@ import {
   resourceIAM,
   selfResourceIAM
 } from '../middleware/iam.js';
+import { documentAuditLogger } from '../middleware/auditLogger.js';
 import { DocumentController } from '../controllers/DocumentController.js';
 
 const router = express.Router();
@@ -19,6 +20,7 @@ const router = express.Router();
 router.post('/',
   authenticateToken,
   canCreateDocs,
+  documentAuditLogger('docs:Create', (req) => `doc:${req.body.title || 'new'}`),
   DocumentController.createDocument
 );
 

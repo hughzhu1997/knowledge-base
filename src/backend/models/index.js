@@ -26,6 +26,7 @@ import Document from './Document.js';
 import Tag from './Tag.js';
 import DocumentTag from './DocumentTag.js';
 import Revision from './Revision.js';
+import AuditLog from './AuditLog.js';
 
 // Initialize models
 const db = {};
@@ -38,6 +39,7 @@ db.Document = Document(sequelize, Sequelize.DataTypes);
 db.Tag = Tag(sequelize, Sequelize.DataTypes);
 db.DocumentTag = DocumentTag(sequelize, Sequelize.DataTypes);
 db.Revision = Revision(sequelize, Sequelize.DataTypes);
+db.AuditLog = AuditLog(sequelize, Sequelize.DataTypes);
 
 // Define associations
 
@@ -177,6 +179,27 @@ db.Tag.belongsTo(db.User, {
 db.User.hasMany(db.Tag, {
   foreignKey: 'created_by',
   as: 'createdTags'
+});
+
+// AuditLog associations
+db.AuditLog.belongsTo(db.User, {
+  foreignKey: 'actor_id',
+  as: 'actor'
+});
+
+db.AuditLog.belongsTo(db.User, {
+  foreignKey: 'target_user_id',
+  as: 'targetUser'
+});
+
+db.User.hasMany(db.AuditLog, {
+  foreignKey: 'actor_id',
+  as: 'auditLogs'
+});
+
+db.User.hasMany(db.AuditLog, {
+  foreignKey: 'target_user_id',
+  as: 'targetAuditLogs'
 });
 
 // Export everything

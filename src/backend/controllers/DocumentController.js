@@ -1,5 +1,6 @@
 import { DocumentService } from '../services/DocumentService.js';
 import { TagService } from '../services/TagService.js';
+import { AuditLogService } from '../services/AuditLogService.js';
 
 /**
  * Document Controller
@@ -18,6 +19,30 @@ export class DocumentController {
       const authorId = req.user.userId;
 
       const document = await DocumentService.createDocument(documentData, authorId);
+
+      // Log audit trail
+      try {
+        console.log('Creating audit log for document:', document.id);
+        const auditResult = await AuditLogService.logSuccess(
+          'docs:Create',
+          `doc:${document.id}`,
+          authorId,
+          req,
+          {
+            message: `Document "${document.title}" created`,
+            metadata: {
+              documentId: document.id,
+              documentTitle: document.title,
+              category: document.category,
+              status: document.status
+            }
+          }
+        );
+        console.log('✅ Audit log created successfully:', auditResult.id);
+      } catch (auditError) {
+        console.error('❌ Audit logging failed:', auditError.message);
+        console.error('Audit error details:', auditError);
+      }
 
       res.status(201).json({
         success: true,
@@ -159,6 +184,25 @@ export class DocumentController {
       const userId = req.user.userId;
 
       await DocumentService.deleteDocument(documentId, userId);
+
+      // Log audit trail
+      try {
+        await AuditLogService.logSuccess(
+          'docs:Delete',
+          `doc:${documentId}`,
+          userId,
+          req,
+          {
+            message: `Document deleted`,
+            metadata: {
+              documentId: documentId,
+              deletedAt: new Date().toISOString()
+            }
+          }
+        );
+      } catch (auditError) {
+        console.error('Audit logging failed:', auditError);
+      }
 
       res.json({
         success: true,
