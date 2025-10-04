@@ -5,7 +5,8 @@ import {
   canCreateDocs, 
   canUpdateDocs, 
   canDeleteDocs,
-  resourceIAM 
+  resourceIAM,
+  selfResourceIAM
 } from '../middleware/iam.js';
 import { DocumentController } from '../controllers/DocumentController.js';
 
