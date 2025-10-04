@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, User, Database, FileText, Settings } from 'lucide-react';
+import { LogOut, User, Database, FileText, Settings, Plus } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
@@ -43,6 +44,17 @@ export const DashboardPage: React.FC = () => {
               Login successful! This is your dashboard homepage.
             </p>
             <div className="mt-6">
+              {/* Quick Actions */}
+              <div className="mb-8 text-center">
+                <Link
+                  to="/documents/create"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Create New Document
+                </Link>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-lg shadow">
                   <User className="h-8 w-8 text-blue-600 mx-auto mb-4" />
@@ -50,11 +62,11 @@ export const DashboardPage: React.FC = () => {
                   <p className="mt-2 text-sm text-gray-500">View and manage your account information</p>
                 </div>
                 
-                <div className="bg-white p-6 rounded-lg shadow">
+                <Link to="/documents" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
                   <FileText className="h-8 w-8 text-green-600 mx-auto mb-4" />
                   <h4 className="text-lg font-medium text-gray-900">My Documents</h4>
                   <p className="mt-2 text-sm text-gray-500">Manage your documents and knowledge base</p>
-                </div>
+                </Link>
                 
                 <div className="bg-white p-6 rounded-lg shadow">
                   <Settings className="h-8 w-8 text-gray-600 mx-auto mb-4" />
