@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { TagSelector } from '../components/TagSelector';
 import { 
   ArrowLeft, 
   Save, 
@@ -53,6 +54,7 @@ export const DocumentEditPage: React.FC = () => {
     content: '',
     status: 'draft' as 'draft' | 'published' | 'archived',
   });
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Fetch document details
@@ -89,6 +91,7 @@ export const DocumentEditPage: React.FC = () => {
           content: data.data.content,
           status: data.data.status,
         });
+        setSelectedTags(data.data.tags.map(tag => tag.name));
       } else {
         throw new Error('Failed to fetch document');
       }
@@ -128,6 +131,7 @@ export const DocumentEditPage: React.FC = () => {
           title: formData.title,
           content: formData.content,
           status: formData.status,
+          tags: selectedTags
         }),
       });
 
@@ -337,6 +341,18 @@ export const DocumentEditPage: React.FC = () => {
               <p className="mt-1 text-sm text-gray-500">
                 Draft: Work in progress. Published: Visible to others. Archived: Hidden from public view.
               </p>
+            </div>
+
+            {/* Tags */}
+            <div className="mb-6">
+              <TagSelector
+                selectedTags={selectedTags}
+                onTagsChange={(tags) => {
+                  setSelectedTags(tags);
+                  setHasChanges(true);
+                }}
+                token={tokens?.access_token}
+              />
             </div>
 
             {/* Document Content */}

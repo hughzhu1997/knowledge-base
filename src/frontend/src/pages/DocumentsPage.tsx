@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { TagSelector } from '../components/TagSelector';
 import { 
   Plus, 
   Search, 
@@ -52,6 +53,7 @@ export const DocumentsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -60,7 +62,7 @@ export const DocumentsPage: React.FC = () => {
   const limit = 10;
 
   // Fetch documents
-  const fetchDocuments = async (page = 1, search = '', status = 'all') => {
+  const fetchDocuments = async (page = 1, search = '', status = 'all', tags: string[] = []) => {
     try {
       setLoading(true);
       setError(null);
@@ -72,6 +74,9 @@ export const DocumentsPage: React.FC = () => {
 
       if (search) params.append('search', search);
       if (status !== 'all') params.append('status', status);
+      if (tags.length > 0) {
+        tags.forEach(tag => params.append('tags', tag));
+      }
 
       const response = await fetch(`http://localhost:3000/api/documents/my?${params}`, {
         headers: {
@@ -127,7 +132,7 @@ export const DocumentsPage: React.FC = () => {
       
       if (data.success) {
         // Refresh the list
-        await fetchDocuments(currentPage, searchTerm, statusFilter);
+        await fetchDocuments(currentPage, searchTerm, statusFilter, selectedTags);
       } else {
         throw new Error('Failed to delete document');
       }
@@ -142,18 +147,18 @@ export const DocumentsPage: React.FC = () => {
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchDocuments(1, searchTerm, statusFilter);
+    fetchDocuments(1, searchTerm, statusFilter, selectedTags);
   };
 
   // Handle filter change
   const handleFilterChange = (newStatus: string) => {
     setStatusFilter(newStatus);
-    fetchDocuments(1, searchTerm, newStatus);
+    fetchDocuments(1, searchTerm, newStatus, selectedTags);
   };
 
   // Handle page change
   const handlePageChange = (page: number) => {
-    fetchDocuments(page, searchTerm, statusFilter);
+    fetchDocuments(page, searchTerm, statusFilter, selectedTags);
   };
 
   // Initial load
@@ -245,6 +250,24 @@ export const DocumentsPage: React.FC = () => {
                 <option value="archived">Archived</option>
               </select>
             </div>
+          </div>
+
+          {/* Tag Filter */}
+          <div className="mt-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Tag className="h-4 w-4 text-gray-400" />
+              <label className="text-sm font-medium text-gray-700">
+                Filter by Tags:
+              </label>
+            </div>
+            <TagSelector
+              selectedTags={selectedTags}
+              onTagsChange={(tags) => {
+                setSelectedTags(tags);
+                fetchDocuments(1, searchTerm, statusFilter, tags);
+              }}
+              token={tokens?.access_token}
+            />
           </div>
         </div>
 

@@ -23,7 +23,7 @@ export default (sequelize, DataTypes) => {
       
       const tags = [];
       for (const tagName of tagNames) {
-        const { tag } = await db.Tag.findOrCreateByName(tagName, creatorId);
+        const { tag } = await db.default.Tag.findOrCreateByName(tagName, creatorId);
         tags.push(tag);
       }
 
@@ -43,7 +43,7 @@ export default (sequelize, DataTypes) => {
     static async removeTagsFromDocument(documentId, tagNames) {
       const db = await import('./index.js');
       
-      const tags = await db.Tag.findAll({
+      const tags = await db.default.Tag.findAll({
         where: {
           name: tagNames.map(name => name.toLowerCase())
         }

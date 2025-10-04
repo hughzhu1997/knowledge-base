@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { TagSelector } from '../components/TagSelector';
 import { 
   ArrowLeft, 
   Save, 
@@ -33,6 +34,7 @@ export const DocumentCreatePage: React.FC = () => {
     content: '',
     status: 'draft' as 'draft' | 'published' | 'archived',
   });
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Handle form input changes
@@ -61,6 +63,10 @@ export const DocumentCreatePage: React.FC = () => {
           title: formData.title,
           content: formData.content,
           status: formData.status,
+          category: 'General',
+          doc_type: 'General',
+          visibility: 'private',
+          tags: selectedTags
         }),
       });
 
@@ -196,6 +202,18 @@ export const DocumentCreatePage: React.FC = () => {
               <p className="mt-1 text-sm text-gray-500">
                 You can change the status later. Draft is recommended for new documents.
               </p>
+            </div>
+
+            {/* Tags */}
+            <div className="mb-6">
+              <TagSelector
+                selectedTags={selectedTags}
+                onTagsChange={(tags) => {
+                  setSelectedTags(tags);
+                  setHasChanges(true);
+                }}
+                token={tokens?.access_token}
+              />
             </div>
 
             {/* Document Content */}
